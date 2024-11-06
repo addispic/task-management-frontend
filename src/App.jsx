@@ -16,7 +16,7 @@ const App = () => {
         <div className='max-w-[1000px] mx-auto h-screen px-1.5 py-1.5'>
             {/* header */}
             <Header />
-            <div>
+            <div className='flex gap-x-10 h-[91vh] my-1.5'>
                 {/* side bar */}
                 <SideBar />
                 {/* pages */}
