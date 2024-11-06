@@ -10,12 +10,15 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { BsFillArrowRightSquareFill } from "react-icons/bs";
 import { FaCamera } from "react-icons/fa";
 
+
 const Header = () => {
 
   // states
   // local states
   // user info toggler
   const [userInfoToggler, setUserInfoToggler] = useState(false)
+
+  
 
   return (
     <div className="flex items-center justify-between bg-white shadow-md p-1.5">
@@ -28,7 +31,7 @@ const Header = () => {
       </div>
       {/* right */}
       <div>
-        {!true ? (
+        {true ? (
           <div className="flex items-center gap-x-1.5">
             {/* message */}
             <NavLink className={"text-sky-600"}>
@@ -54,7 +57,7 @@ const Header = () => {
                 <FaAngleDown className={`text-sky-600 transition-transform ease-in-out duration-150 ${userInfoToggler ? "-rotate-180" : "rotate-0"}`} />
               </div>
               {/* user info */}
-              <div className={`absolute right-0 top-[5vh] overflow-hidden transition-all ease-in-out duration-150 ${userInfoToggler ? "h-[80vh]" : "h-0"}`}>
+              <div className={`absolute z-50 right-0 top-[5vh] overflow-hidden transition-all ease-in-out duration-150 ${userInfoToggler ? "h-[80vh]" : "h-0"}`}>
                 <div className="m-3 relative bg-white border border-neutral-300 rounded-md p-3">
                   {/* triangle */}
                   <div className="w-[14px] rotate-45 aspect-square border border-neutral-300 absolute top-0 right-7 mt-[-7px] bg-white border-r-transparent border-b-transparent"/>
