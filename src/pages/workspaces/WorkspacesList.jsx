@@ -58,7 +58,7 @@ const WorkspacesList = () => {
       <header className="flex items-center justify-between px-3 py-1.5 rounded-sm bg-neutral-100 ">
         {/* left */}
         <div className="flex items-center gap-x-2">
-          <h3 className="font-bold text-neutral-400 text-lg">Workspaces</h3>
+          {/* <h3 className="font-bold text-neutral-400 text-lg">Workspaces</h3> */}
           <div className="flex items-center gap-x-1 bg-white px-1.5 py-1 rounded-md border border-neutral-200">
             <CiSearch className="text-xl" />
             <input

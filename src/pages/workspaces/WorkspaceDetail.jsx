@@ -8,16 +8,15 @@ import { RxExit } from "react-icons/rx";
 import { AiOutlinePlus } from "react-icons/ai";
 import { SiMicrosoftteams } from "react-icons/si";
 import { GoTasklist } from "react-icons/go";
-import { PiUserPlusLight } from "react-icons/pi";
 import { CiEdit } from "react-icons/ci";
 import { AiOutlineDelete } from "react-icons/ai";
-import { FaCheck } from "react-icons/fa";
 import { IoCheckmarkSharp } from "react-icons/io5";
 import { IoIosTimer } from "react-icons/io";
 import { MdOutlineUpdate } from "react-icons/md";
 import { MdOutlinePersonAddAlt } from "react-icons/md";
 import { IoCheckmarkCircle } from "react-icons/io5";
 import { CiSearch } from "react-icons/ci";
+import { MdKeyboardArrowDown } from "react-icons/md";
 
 const WorkspaceDetail = () => {
   // hooks
@@ -46,6 +45,25 @@ const WorkspaceDetail = () => {
   const [taskPriority, setTaskPriority] = useState(-1);
   // is new task
   const [isNewTaskOn,setIsNewTaskOn] = useState(false)
+  // filter option
+  const [filterOption,setFilterOption] = useState({
+    options: [
+      {
+        text: "All Tasks",
+      },
+      {
+        text: "On Progress",
+      },
+      {
+        text: "Pending Tasks",
+      },
+      {
+        text: "Closed Tasks"
+      }
+    ],
+    selected: "All Tasks",
+    isOn: false
+  })
   // navigate
   const navigate = useNavigate();
 
@@ -71,53 +89,69 @@ const WorkspaceDetail = () => {
   return (
     <div>
       {/* top */}
-      <div className="p-5 bg-neutral-100 rounded-md  overflow-hidden flex items-center justify-between">
+      <div className="p-5 bg-neutral-100 rounded-md  flex items-center justify-between">
         {/* left */}
-        <div className="flex items-center gap-x-5">
-          {dashboardMainLinks.links.map((item, index) => {
-            return (
-              <button
-                onClick={() => {
-                  setDashboardMainLinks((props) => {
-                    return {
-                      ...props,
-                      selected: item.text,
-                    };
-                  });
-                }}
-                className={`flex items-center gap-x-1 text-sky-600 relative after:absolute after:left-0 after:bottom-0 after:bg-sky-600  after:h-[2px] after:transition-all after:ease-in-out after:duration-200 hover:after:w-full ${
-                  dashboardMainLinks.selected === item.text
-                    ? "after:w-full"
-                    : "after:w-0"
-                }`}
-              >
-                <item.icon className="text-lg" />
-                <span>{item.text}</span>
-              </button>
-            );
-          })}
+        <div className="flex items-center gap-x-1.5">
+          {/* search */}
+          <div className="border border-neutral-200 rounded-md bg-white p-1 flex items-center gap-x-1">
+            <CiSearch className="text-lg"/>
+            <input className="focus:ring-0 text-sm focus:outline-none border-none w-full bg-transparent" type="text" placeholder="search" />
+          </div>
+          {/* filter */}
+          <div className="flex items-center gap-x-3">
+            <div className="text-sm text-neutral-400">
+              <span>Filter By: </span>
+            </div>
+            {/* option */}
+            <div className="relative">
+              <div className="flex items-center gap-x-1 border border-neutral-200 rounded-sm cursor-pointer px-1 py-0.5 text-sm w-[115px] bg-white" onClick={()=>{
+                setFilterOption(item => {
+                  return {
+                    ...item,
+                    isOn: !item.isOn
+                  }
+                })
+              }}>
+                <div className="flex-1 items-center gap-x-1">{filterOption.selected}</div>
+                <MdKeyboardArrowDown className={`transition-transform ease-in-out duration-150 ${filterOption.isOn ? "-rotate-180" : "rotate-0"}`}/>
+              </div>
+              {/* option list */}
+              {
+                filterOption.isOn && 
+              <div className="absolute left-0 top-0 w-full bg-white mt-[1.75rem] shadow-lg p-1.5">
+                {
+                  filterOption.options.map((item,index)=>{
+                    return (
+                      <div onClick={()=>{
+                        setFilterOption(prev => {
+                          return {
+                            ...prev,
+                            selected: item.text,
+                            isOn: false
+                          }
+                        })
+                      }} key={item.text} className="cursor-pointer transition-colors ease-in-out duration-150 hover:bg-neutral-100 px-1.5 py-0.5 text-sm">
+                        <span>{item.text}</span>
+                      </div>
+                    )
+                  })
+                }
+              </div>
+              }
+            </div>
+          </div>
+          
         </div>
-
-        {/* workspaces */}
-        <h3 className="text-neutral-400 font-medium flex-1  px-16">
-          Skylight Technologies
-        </h3>
 
         <div className="flex items-center gap-x-3">
           <div className="flex items-center gap-x-3">
-            {dashboardMainLinks.selected === "Tasks" ? (
+            <h3 className="text-neutral-500 ">Workspace</h3>
               <button onClick={()=>{
                 setIsNewTaskOn(true)
               }} className="flex items-center gap-x-1.5 text-sky-500 text-sm transition-colors ease-in-out duration-150 hover:text-sky-600">
                 <AiOutlinePlus />
                 <span>add new task</span>
               </button>
-            ) : dashboardMainLinks.selected === "Teams" ? (
-              <button className="flex items-center gap-x-1.5 text-sky-500 text-sm transition-colors ease-in-out duration-150 hover:text-sky-600">
-                <PiUserPlusLight className="text-lg" />
-                <span>add member</span>
-              </button>
-            ) : null}
           </div>
 
           {/* right */}
@@ -129,12 +163,12 @@ const WorkspaceDetail = () => {
             <RxExit className=" text-neutral-500 transition-colors ease-in-out duration-150 hover:text-sky-600" />
           </button>
         </div>
+
       </div>
       {/* content */}
-      <div className="p-5 bg-neutral-100 rounded-md h-[81vh] overflow-y-auto mt-5">
-        {dashboardMainLinks.selected === "Tasks" ? (
+      <div className="p-5 bg-neutral-100 rounded-md h-[81vh] overflow-y-auto mt-5" id="workspace-tasks-list-container">
           <div>
-            {[...Array(2)].map((item, index) => {
+            {[...Array(21)].map((item, index) => {
               return (
                 <div className="border border-neutral-200 rounded-md p-3 mb-5 bg-white shadow-md">
                   {/* header */}
@@ -212,9 +246,7 @@ const WorkspaceDetail = () => {
               );
             })}
           </div>
-        ) : dashboardMainLinks.selected === "Teams" ? (
-          <div>Teams</div>
-        ) : null}
+        
       </div>
 
       {/* new task */}
