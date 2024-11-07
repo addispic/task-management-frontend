@@ -8,7 +8,7 @@ const Dashboard = () => {
       <Outlet />
       </div>
       {/* right side */}
-      <div className='w-[30%] bg-green-500'>hello World</div>
+      <div className='w-[30%] bg-green-100 p-5 rounded-md'>hello World</div>
     </div>
   )
 }

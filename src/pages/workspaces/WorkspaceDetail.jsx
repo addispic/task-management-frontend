@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 // icons
 import { RxExit } from "react-icons/rx";
@@ -13,11 +15,37 @@ import { FaCheck } from "react-icons/fa";
 import { IoCheckmarkSharp } from "react-icons/io5";
 import { IoIosTimer } from "react-icons/io";
 import { MdOutlineUpdate } from "react-icons/md";
+import { MdOutlinePersonAddAlt } from "react-icons/md";
+import { IoCheckmarkCircle } from "react-icons/io5";
+import { CiSearch } from "react-icons/ci";
 
 const WorkspaceDetail = () => {
   // hooks
   // params
   const { workspace_id } = useParams();
+  // is uae list on
+  const [isUserListOn, setIsUserListOn] = useState(false);
+  // is user selected
+  const [isUserSelected, setIsUserSelected] = useState(false);
+  // task title
+  const [taskTitle, setTaskTitle] = useState("");
+  // task description
+  const [taskDescription, setTaskDescription] = useState("");
+  // is focus
+  const [isFocus, setIsFocus] = useState("");
+  // dates
+  // start date
+  const [selectStartedDate, setSelectStartedDate] = useState(null);
+  // is started date on
+  const [isStartedDateOn, setIsStartedDateOn] = useState(false);
+  // end date
+  const [selectEndDate, setSelectEndDate] = useState(null);
+  // is end date on
+  const [isEndDateOn, setIsEndDateOn] = useState(false);
+  // priority
+  const [taskPriority, setTaskPriority] = useState(-1);
+  // is new task
+  const [isNewTaskOn,setIsNewTaskOn] = useState(false)
   // navigate
   const navigate = useNavigate();
 
@@ -35,6 +63,11 @@ const WorkspaceDetail = () => {
     ],
     selected: "Tasks",
   });
+
+  const handleButtonClick = () => {
+    setShowPicker(true);
+  };
+
   return (
     <div>
       {/* top */}
@@ -73,7 +106,9 @@ const WorkspaceDetail = () => {
         <div className="flex items-center gap-x-3">
           <div className="flex items-center gap-x-3">
             {dashboardMainLinks.selected === "Tasks" ? (
-              <button className="flex items-center gap-x-1.5 text-sky-500 text-sm transition-colors ease-in-out duration-150 hover:text-sky-600">
+              <button onClick={()=>{
+                setIsNewTaskOn(true)
+              }} className="flex items-center gap-x-1.5 text-sky-500 text-sm transition-colors ease-in-out duration-150 hover:text-sky-600">
                 <AiOutlinePlus />
                 <span>add new task</span>
               </button>
@@ -170,9 +205,7 @@ const WorkspaceDetail = () => {
                     {/* recent update */}
                     <div className="flex items-center gap-x-1 text-neutral-500">
                       <MdOutlineUpdate />
-                      <span className="text-sm">
-                        last update 1 minutes ago
-                      </span>
+                      <span className="text-sm">last update 1 minutes ago</span>
                     </div>
                   </footer>
                 </div>
@@ -183,6 +216,294 @@ const WorkspaceDetail = () => {
           <div>Teams</div>
         ) : null}
       </div>
+
+      {/* new task */}
+      {
+        isNewTaskOn && 
+      <div className="fixed left-0 top-0 w-full h-full bg-black bg-opacity-35">
+        <div className="absolute top-32 left-1/2 -translate-x-1/2 p-5 w-[35%] rounded-md overflow-hidden bg-white shadow-xl">
+          {/* new task */}
+          <header className="flex items-center justify-between">
+            <h3 className="text-neutral-400 font-bold">New Task</h3>
+            {isUserSelected ? (
+              <div
+                className="flex items-center gap-x-2 cursor-pointer"
+                onClick={() => {
+                  setIsUserSelected(false);
+                }}
+              >
+                {/* username & image */}
+                <p className="text-sm text-sky-500">Username</p>
+                <div className="w-[24px] aspect-square rounded-full overflow-hidden">
+                  <img
+                    className="w-full h-full object-center object-cover"
+                    src="https://static.vecteezy.com/system/resources/thumbnails/005/346/410/small_2x/close-up-portrait-of-smiling-handsome-young-caucasian-man-face-looking-at-camera-on-isolated-light-gray-studio-background-photo.jpg"
+                    alt=""
+                  />
+                </div>
+              </div>
+            ) : (
+              <button
+                onClick={() => {
+                  setIsUserListOn(true);
+                }}
+              >
+                <div className="flex items-center gap-x-1 text-sm text-sky-400 transition-colors ease-in-out duration-150 hover:text-sky-500">
+                  <MdOutlinePersonAddAlt className="text-lg" />
+                  <span>select user</span>
+                </div>
+              </button>
+            )}
+          </header>
+          {/* user list */}
+          {isUserListOn && !isUserSelected && (
+            <div>
+              <div className="mt-1 overflow-hidden rounded-sm p-1">
+                {/* header */}
+                <header className="flex items-center gap-x-5 bg-sky-500 px-1.5 py-1 rounded-t-sm overflow-hidden">
+                  {/* left */}
+                  <div className=" w-[75%]">
+                    <div className="flex items-center gap-x-1 w-full bg-neutral-100 rounded-sm p-1">
+                      <CiSearch className="text-xl" />
+                      <input
+                        className="focus:ring-0 text-sm focus:outline-none w-full border-none bg-transparent"
+                        type="text"
+                        placeholder="search"
+                      />
+                    </div>
+                  </div>
+                </header>
+                {/* list */}
+                <div
+                  className="border border-sky-500 max-h-[32vh] overflow-y-auto rounded-b-sm overflow-hidden p-1 pr-3"
+                  id="workspace-users-list-container"
+                >
+                  {[...Array(15)].map((item, index) => {
+                    return (
+                      <div
+                        className={`flex items-center gap-x-3 justify-between mb-1.5 p-1 rounded-md overflow-hidden cursor-pointer  transition-colors ease-in-out duration-150  ${
+                          index === 1
+                            ? "bg-sky-100"
+                            : "bg-neutral-100 hover:bg-neutral-200"
+                        }`}
+                        onClick={() => {
+                          setIsUserSelected(true);
+                        }}
+                      >
+                        {/* left */}
+                        <div className="flex items-center gap-x-1">
+                          {/* image */}
+                          <div className="w-[28px] aspect-square rounded-full overflow-hidden">
+                            <img
+                              className="w-full h-full object-center object-cover"
+                              src="https://img.freepik.com/free-photo/close-up-portrait-frowning-angry-bearded-man_171337-4829.jpg?semt=ais_hybrid"
+                              alt=""
+                            />
+                          </div>
+                          {/* username */}
+                          <div className="text-sm text-sky-600">
+                            <p>username</p>
+                          </div>
+                        </div>
+                        {/* right */}
+                        <div>
+                          <IoCheckmarkCircle
+                            className={`text-sky-500 transition-transform ease-in-out duration-150 ${
+                              index === 1 ? "scale-100" : "scale-0"
+                            }`}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* content */}
+          {isUserSelected && (
+            <div className="mt-3">
+              <div>
+                {/* task title */}
+                <div
+                  className={`border p-1 rounded-sm mb-4 ${
+                    isFocus === "task-title" || taskTitle
+                      ? "border-sky-500"
+                      : "border-neutral-300"
+                  }`}
+                >
+                  <input
+                    onFocus={() => {
+                      setIsFocus("task-title");
+                    }}
+                    onBlur={() => {
+                      setIsFocus("");
+                    }}
+                    value={taskTitle}
+                    onChange={(e) => {
+                      setTaskTitle(e.target.value);
+                    }}
+                    className="w-full focus:ring-0 focus:outline-none border-none bg-transparent"
+                    type="text"
+                    placeholder="task title"
+                  />
+                </div>
+                {/* test description */}
+                <div
+                  className={`border p-1 ${
+                    isFocus === "task-description" || taskDescription
+                      ? "border-sky-500"
+                      : "border-neutral-200"
+                  }`}
+                >
+                  <textarea
+                    onFocus={() => {
+                      setIsFocus("task-description");
+                    }}
+                    onBlur={() => {
+                      setIsFocus("");
+                    }}
+                    value={taskDescription}
+                    onChange={(e) => {
+                      setTaskDescription(e.target.value);
+                    }}
+                    name=""
+                    placeholder="task description"
+                    id="task-description-textarea"
+                    className="w-full focus:ring-0 focus:outline-none bg-transparent resize-none h-[18px]"
+                  ></textarea>
+                </div>
+                {/* start & end date */}
+                <div className="flex items-start justify-between my-3">
+                  <div className="">
+                    <div className="flex items-center gap-x-5">
+                      <div
+                        className="w-max px-1.5 py-0.5 bg-sky-500 rounded-sm text-white text-sm transition-colors ease-in-out duration-150 hover:bg-sky-400 cursor-pointer"
+                        onClick={() => {
+                          setIsStartedDateOn(true);
+                        }}
+                      >
+                        <span>Start Date</span>
+                      </div>
+                      {selectStartedDate && (
+                        <div className="text-sm text-sky-600">
+                          <span>
+                            {selectStartedDate.toLocaleDateString("en-US", {
+                              month: "long",
+                              day: "numeric",
+                              year: "numeric",
+                            })}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {isStartedDateOn && (
+                      <div className="mt-3">
+                        <DatePicker
+                          selected={selectStartedDate}
+                          onChange={(date) => {
+                            setSelectStartedDate(date);
+                            setIsStartedDateOn(false);
+                          }}
+                          onClickOutside={() => isStartedDateOn(false)}
+                          inline
+                        />
+                      </div>
+                    )}
+                  </div>
+                  {/* end date */}
+                  <div className="">
+                    <div className="flex items-center gap-x-5">
+                      <div
+                        className="w-max px-1.5 py-0.5 bg-sky-500 rounded-sm text-white text-sm transition-colors ease-in-out duration-150 hover:bg-sky-400 cursor-pointer"
+                        onClick={() => {
+                          setIsEndDateOn(true);
+                        }}
+                      >
+                        <span>End date</span>
+                      </div>
+                      {selectEndDate && (
+                        <div className="text-sm text-sky-600">
+                          <span>
+                            {selectEndDate.toLocaleDateString("en-US", {
+                              month: "long",
+                              day: "numeric",
+                              year: "numeric",
+                            })}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {isEndDateOn && (
+                      <div className="mt-3">
+                        <DatePicker
+                          selected={selectEndDate}
+                          onChange={(date) => {
+                            setSelectEndDate(date);
+                            setIsEndDateOn(false);
+                          }}
+                          onClickOutside={() => setIsEndDateOn(false)}
+                          inline
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+                {/* priority */}
+                <div className="flex gap-x-7">
+                  <div className="text-sm text-sky-600">
+                    <span>Priority</span>
+                  </div>
+                  <div className="flex items-center gap-x-5 flex-wrap">
+                    {[...Array(3)].map((item, index) => {
+                      return (
+                        <div
+                          className="flex items-center gap-x-1 cursor-pointer"
+                          onClick={() => {
+                            setTaskPriority(
+                              taskPriority === index ? -1 : index
+                            );
+                          }}
+                        >
+                          <div
+                            className={`w-[18px] ${
+                              taskPriority === index
+                                ? "border-sky-500 bg-sky-500 text-white"
+                                : "border-neutral-300"
+                            } text-sm flex items-center justify-center aspect-square rounded-sm border `}
+                          >
+                            <IoCheckmarkSharp
+                              className={`transition-transform ease-in-out duration-150 ${
+                                taskPriority === index ? "scale-100" : "scale-0"
+                              }`}
+                            />
+                          </div>
+                          <span className="text-sm">Critical</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+                {/* buttons */}
+                <div className="mt-5 flex items-center gap-x-3">
+                  <button className="px-3 py-1 text-sm bg-sky-500 text-white rounded-sm transition-colors ease-in-out duration-150 hover:bg-sky-400">
+                    create task
+                  </button>
+                  <button className="px-3 py-1 text-sm bg-red-500 text-white rounded-sm transition-colors ease-in-out duration-150 hover:bg-red-400" onClick={()=>{
+                    setIsNewTaskOn(false)
+                  }}>
+                    cancel task
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+      }
     </div>
   );
 };
